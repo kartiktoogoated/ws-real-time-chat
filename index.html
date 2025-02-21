@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Chat Room</title>
+</head>
+<body>
+    <h2>FastAPI WebSocket Chat</h2>
+    <input type="text" id="username" placeholder="Enter your username">
+    <button onclick="connect()">Join Chat</button>
+    <br><br>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        let ws;
+        function connect() {
+            let username = document.getElementById("username").value;
+            if (!username) {
+                alert("Enter a username!");
+                return;
+            }
+            ws = new WebSocket(`ws://localhost:8000/ws/${username}`);
+            ws.onmessage = event => {
+                let chat = document.getElementById("chat");
+                chat.innerHTML += `<p>${event.data}</p>`;
+            };
+        }
+
+        function sendMessage() {
+            let message = document.getElementById("message").value;
+            if (ws && message) {
+                ws.send(message);
+                document.getElementById("message").value = "";
+            }
+        }
+    </script>
+</body>
+</html>
